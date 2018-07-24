@@ -1,0 +1,235 @@
+<div class="col-md-12">
+	<a (click)="logout()" class="text-center">Logout</a>
+</div>
+
+<div col-md-12>
+	<h3>Top Heroes</h3>
+	<div class="grid grid-pad">
+	  <a *ngFor="let hero of heroes" class="col-1-4" routerLink="/details/{{hero._id}}" >
+	    <div class="module hero">
+	      <h4 class="text-nowrap">{{hero.username}}<br>{{ hero.email }}</h4>
+	    </div>
+	  </a>
+	</div>	
+
+	<div class="col-md-6">
+		<div>
+			<h2>Create New User</h2>
+		</div>
+		<div class="d-flex justify-content-center">	
+			<div class="form-group">
+					<div >
+						<input type="text" class="form-control form-control" [(ngModel)]="user.username" placeholder="username" />	
+					</div>
+
+					<div>  
+						<input type="email" class="form-control form-control" [(ngModel)]="user.email" placeholder="email" />
+
+					</div>
+
+					<div > 
+						<input type="text" class="form-control form-control" placeholder="password" [(ngModel)]="user.password" />		
+					</div>
+
+					<button class="btn btn-success" (click)="createUser();" >Submit</button>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="col-md-6">
+		<h2>Check Box(mark down):</h2>
+		<table class="table table-border">
+			
+			<tr>
+				<th>Check All<br> <input type="checkbox" [(ngModel)]="selectedAll"  (change)="selectAll(selectedAll)"> </th>
+				<th>Name</th>
+				<th>Mail</th>
+			</tr>
+
+			<tr *ngFor="let item of heroes">
+				<td> <input type="checkbox" [(ngModel)]="item.selected" (change)="checkIfAllSelected(item.selected, item._id)"></td>
+				<td>{{ item.username }}</td>
+				<td>{{ item.email }}</td>
+			</tr>
+
+		</table>
+
+	</div>
+
+</div>
+
+<div class="clearfix"></div>
+<hr>
+
+<div class="col-md-12">
+	<h2> Select Box: </h2>
+	<div class="col-md-6">
+		
+		<select class="form-control" [(ngModel)]="dropDownselected" (change)="selectedFromDropDown($event)">
+			<option *ngFor="let item of heroes" value="{{ item._id }}"> {{ item.email }}</option>
+		</select>
+
+	</div>
+
+	<div class="col-md-6">
+		<h2> Form Using template driven approach: </h2>
+		<div *ngIf="successMsg">{{ successMsg }}</div>
+		<div>
+			<form [formGroup]="myForm" (ngSubmit)="addNewUser(myForm.value)">
+				<div >
+					
+					<div  class="form-group">
+						<input 	type="text" 
+								class="form-control" 
+								formControlName="username" 
+								placeholder="Enter username" 
+								*ngIf="myForm.controls['username'].invalid || myForm.controls['username'].dirty" 
+								>
+
+							<div *ngIf="myForm.controls['username'].invalid && (myForm.controls['username'].dirty || myForm.controls['username'].touched)">
+								<div *ngIf="myForm.controls['username'].errors.required" class="alert alert-danger">
+			            			Username is required. 
+			          			</div>
+							</div>
+					</div>
+					
+					<div class="form-group">
+						<input 	type="text" 
+								class="form-control" 
+								formControlName="email" 
+								placeholder="Enter Email" 
+								>
+
+								<div *ngIf="myForm.controls['email'].invalid && (myForm.controls['email'].dirty || myForm.controls['email'].touched)">
+									<div *ngIf="myForm.controls['email'].errors.required" class="alert alert-danger">
+										Email required
+									</div>
+								</div>
+					</div>
+
+					<div class="form-group">
+						<input type="password" class="form-control" formControlName="password" placeholder="Enter password">
+					</div>
+					
+					<div class="form-group">
+						<label><b>Gender:</b></label>
+						<div class="form-check-inline">
+						  <label class="form-check-label">
+						    <input type="radio" class="form-check-input" formControlName="gender" value="male">Male
+						  </label>
+						</div>
+						
+						<div class="form-check-inline">
+						  <label class="form-check-label">
+						    <input type="radio" class="form-check-input" formControlName="gender" value="female">Female 
+						  </label>
+						</div>
+
+						<!-- <div *ngIf="myForm.controls['gender'].invalid && myForm.controls['gender'].dirty">
+							<div *ngIf="myForm.controls['gender'].errors.required" class="alert alert-danger">
+								Gender required
+							</div>
+						</div> -->
+					</div>
+
+					<div class="form-group">
+						<label><b>Activation</b></label>:
+						<div class="form-check-inline"> 
+						  <label class="form-check-label">
+						    <input type="radio" class="form-check-input" formControlName="selected" value="true">Yes
+							<input type="radio" class="form-check-input" formControlName="selected" value="false">No 
+						  </label>
+						</div>
+						<!-- <div *ngIf="myForm.controls['activation'].invalid && myForm.controls['activation'].dirty">
+							<div *ngIf="myForm.controls['activation'].errors.required" class="alert alert-danger">
+								Activation required
+							</div>
+						</div> -->	
+					</div>
+					
+					<!-- <div class="form-group">
+						<input type="radio" class="form-control" formControlName="activation" value="yes" name="activation">Yes
+						<input type="radio" class="form-control" formControlName="activation" value="no" name="activation">No
+					</div> -->
+					
+					<div class="form-group">
+						<button type="submit" class="btn btn-success" [disabled]="!myForm.valid">Add</button>
+					</div>
+				</div>	
+			</form>	
+		</div>
+	</div>
+</div>
+
+<div class="col-md-12">
+	<h2>Reactive form</h2>
+	<form [formGroup]="myReactiveForm" ngSubmit="addReactiveForm()">
+		<div class="form-group">
+			<input type="text" formControlName="email" placeholder="Email">
+		</div>
+
+		<div class="form-group col-md-12" formArrayName="phones">
+			
+			<div *ngFor="let phone of phoneForms.controls; let i=index" [formGroupName]="i">				
+				
+				
+				<input type="text" class="form-control col-md-3" formControlName="area" placeholder="area">	
+					
+					<div *ngIf="phone.controls.area.dirty && phone.controls.area.invalid">
+			          	<div *ngIf="phone.hasError('required', 'area')">Required</div>  
+			        </div>
+
+			        <!-- <small [hidden]="myReactiveForm.controls.phones.controls[i].controls.area.invalid">
+	                    Street is required
+	                </small> -->
+	                <!-- <small [hidden]="myReactiveForm.controls.phones.controls[i].controls.area.valid">
+	                    Street is required
+	                </small> -->
+				
+				<input type="text" class="form-control col-md-3" formControlName="prefix" placeholder="prefix" />
+				
+				<input type="text" class="form-control col-md-3" formControlName="line" placeholder="line" />
+				
+				<div class="col-md-3">
+					<button (click)="deletePhone(i)" class="btn btn-danger btn-sm">Delete</button>	
+				</div>
+				
+				<div class="clearfix"></div>
+			</div>
+		
+		</div>
+		<div>
+			<button (click)="addPhone()" class="btn btn-primary btn-sm ">Add</button>	
+		</div>
+
+		<input type="submit" class="btn btn-success" [disabled]="!myReactiveForm.valid" />
+	</form>
+
+	<div class="">
+		Value: {{ myReactiveForm.value | json }}
+	</div>
+
+</div>
+
+
+<div class="clearfix"></div>
+<!-- Angular 5 File Uploading using progress bar -->
+<h2> File Upload </h2>
+
+<div class="col-md-12">
+	<div class="col-md-12">
+		
+		<div class="">
+			<input 	type="file" 
+					name="test_file" 
+					(change)="onFileSelected($event)" 
+					style="display : none" 
+					#inputFile
+			/>	
+			<button type="button" (click)="inputFile.click()">Pick File</button>
+			<button type="button" (click)="onUpload()"> Upload</button>
+		</div>
+
+	</div>
+</div>
